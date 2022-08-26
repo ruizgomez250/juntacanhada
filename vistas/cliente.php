@@ -1,0 +1,294 @@
+<?php 
+//activamos almacenamiento en el buffer
+ob_start();
+session_start();
+if (!isset($_SESSION['nombre'])) {
+  header("Location: login.html");
+}else{
+
+require 'header.php';
+if ($_SESSION['usuariosjunta']==1) {
+ ?>
+    <div class="content-wrapper">
+    <!-- Main content -->
+    <section class="content">
+
+      <!-- Default box -->
+      <div class="row">
+        <div class="col-md-12">
+      <div class="box">
+<div class="box-header with-border">
+  <h1 class="box-title">Usuarios de la Junta <button class="btn btn-success" onclick="agregarnuevo()"><i class="fa fa-plus-circle"></i>Agregar</button></h1>
+  <div class="box-tools pull-right">
+    
+  </div>
+</div>
+<!--box-header-->
+<!--centro-->
+<div class="panel-body table-responsive" id="listadoregistros">
+  <table id="tbllistado" class="table table-striped table-bordered table-condensed table-hover">
+    <thead>
+      <th>Opciones</th>
+      <th>Usuario</th>
+      <th>Nombre</th>
+      <th>Numero Doc.</th>
+      <th>Telefono</th>
+      <th>Email</th>
+      <th>Estado</th>
+    </thead>
+    <tbody>
+    </tbody>
+    <tfoot>
+      <th>Opciones</th>
+      <th>Usuario</th>
+      <th>Nombre</th>
+      <th>Numero</th>
+      <th>Telefono</th>
+      <th>Email</th>
+      <th>Estado</th>
+    </tfoot>   
+  </table>
+</div>
+<div class="panel-body" style="height: 600px;" id="formularioregistros">
+  <form action="" name="formulario" id="formulario" method="POST">
+    <div class="form-group col-lg-6 col-md-6 col-xs-12">
+      <label for="">Nombre</label>
+      <input class="form-control" type="hidden" name="idpersona" id="idpersona">
+      <input class="form-control" type="hidden" name="tipo_persona" id="tipo_persona" value="Cliente">
+      <input class="form-control" type="text" name="nombre" id="nombre" maxlength="100" placeholder="Nombre del cliente" required>
+    </div>
+    <div class="form-group col-lg-6 col-md-6 col-xs-12">
+      <label for="">Apellido</label>
+      <input class="form-control" type="text" name="apellido" id="apellido" maxlength="100" placeholder="Apellido del cliente" required>
+    </div>
+     <div class="form-group col-lg-6 col-md-6 col-xs-12">
+      <label for="">Tipo Documento</label>
+     <select class="form-control select-picker" name="tipo_documento" id="tipo_documento" required>
+       <option value="CEDULA">CEDULA</option>
+       <option value="DNI">DNI</option>
+       <option value="RUC">RUC</option>       
+     </select>
+    </div>
+     <div class="form-group col-lg-6 col-md-6 col-xs-12">
+      <label for="">Número Documento(*):</label>
+      <input class="form-control" type="text" name="num_documento" id="num_documento" maxlength="20" placeholder="Número de Documento" required>
+    </div>
+    <div class="form-group col-lg-6 col-md-6 col-xs-12">
+      <label for="">Direccion</label>
+      <input class="form-control" type="text" name="direccion" id="direccion" maxlength="70" placeholder="Direccion">
+    </div>
+    <div class="form-group col-lg-6 col-md-6 col-xs-12">
+      <label for="">Telefono</label>
+      <input class="form-control" type="text" name="telefono" id="telefono" maxlength="20" placeholder="Número de Telefono">
+    </div>
+        <div class="form-group col-lg-6 col-md-6 col-xs-12">
+      <label for="">Email</label>
+      <input class="form-control" type="email" name="email" id="email" maxlength="50" placeholder="Email">
+    </div>
+    
+    <div class="form-group col-lg-6 col-md-6 col-xs-12">
+      <label for="">Categoria(*):</label>
+      <select name="idcategoria" id="idcategoria" class="form-control selectpicker" data-Live-search="true" required></select>
+    </div>
+    <div class="form-group col-lg-6 col-md-6 col-xs-12">
+      <label for="">Situacion(*):</label>
+      <select name="idsituacion" id="idsituacion" class="form-control selectpicker" data-Live-search="true" required>
+      </select>
+    </div>
+    <div class="form-group col-lg-6 col-md-6 col-xs-12">
+
+      <label for="">Zona(*):</label>
+      <select name="idzona" id="idzona" class="form-control selectpicker" data-Live-search="true" required></select>
+    </div>
+    <div class="form-group col-lg-6 col-md-6 col-xs-12">
+      <label for=""></label>
+      <label for="w3review">Observacion:</label>
+      <textarea id="obs" name="obs" rows="3" cols="68">
+</textarea>
+    </div>
+    
+    
+    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <button class="btn btn-primary" type="submit" id="btnGuardar"><i class="fa fa-save"></i>  Guardar</button>
+
+      <button class="btn btn-danger" onclick="cancelarform()" type="button"><i class="fa fa-arrow-circle-left"></i> Cancelar</button>
+    </div>
+  </form>
+</div>
+<!--fin centro-->
+      </div>
+      </div>
+      </div>
+      <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!--Modal-->
+  <div class="modal fade" id="myModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content borde1">
+        <!--Cabecera-->
+        <div class="modal-header align-self-center"> 
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <div class="card">
+            <div class="card-header">
+              <img src="icon/droplet-fill.svg" width="25" height="25" border="0" id="buscarCod" /> <strong>Ingresar Medidor</strong>
+            </div>
+              
+          </div>
+        </div>
+        <!--body-->
+        <div class="modal-body">
+                
+              <div>
+                <div class="row">
+                  <div class="col-xs-12 text-center ">
+                      <h4><strong id="nombUs">Datos de la cuenta Padre</strong></h4>
+                      <h6>Nº Doc.:<label id="codP"></label></h6>
+                      <h6>Cod. Usu.:<label id="cuentaP"></label></h6>
+                      <h6>Zona:<label id="zon"></label></h6>
+                      <h6>Categoria:<label id="cat"></label></h6>
+                  </div>
+                </div>
+                <hr>
+              <form action="" name="formulario1" id="formulario1" method="POST">
+                <div class="row">
+                    <div class="col-sm-12 text-center">
+                        <h3 class="btn-primary">Asignar Medidor a Usuario </h3>
+                    </div>
+                </div>
+                <div class="row">
+                  
+                  <div class="col-sm-6 ">
+                    <div class="form-group">
+                      <input type="hidden" name="idusuario" id="idusuario" class="form-control" value=""  required>
+                      <label>Codigo Medidor</label>
+                      <input type="text" name="medidor" id="medidor" class="form-control" value="" placeholder="Medidor"  required>
+                      
+                    </div>
+                  </div>
+                  <div class="col-sm-3 ">
+                    <div class="form-group">
+                      <label>Fecha Lectura</label>
+                      <input id="fechaMedidor" name="fechaMedidor" class="form-control" type="date" value="<?php echo date('Y-m-d'); ?>" required>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 ">
+                    <div class="form-group">
+                      <button class=" btn btn-primary " id="guardarMedida"> Guardar</button>
+                    </div>
+                  </div>
+                </form>
+                  
+
+
+                </div>
+              </div>
+
+
+
+                
+
+        </div>
+        <!--pie modal-->
+          <div class="modal-footer">
+          <button class="btn btn-default" type="button" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- fin Modal-->
+  <!--Modal-->
+  <div class="modal fade" id="myModal1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content borde1">
+        <!--Cabecera-->
+        <div class="modal-header align-self-center"> 
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <div class="card">
+            <div class="card-header">
+              <img src="icon/droplet-fill.svg" width="25" height="25" border="0" id="buscarCod" /> <strong>Modificar Medidor</strong>
+            </div>
+              
+          </div>
+        </div>
+        <!--body-->
+        <div class="modal-body">
+                
+              <div>
+                <div class="row">
+                  <div class="col-xs-12 text-center ">
+                      <h4><strong id="nombUs1">Datos de la cuenta Padre</strong></h4>
+                      <h6>Nº Doc.:<label id="codP1"></label></h6>
+                      <h6>Cod. Usu.:<label id="cuentaP1"></label></h6>
+                      <h6>Zona:<label id="zon1"></label></h6>
+                      <h6>Categoria:<label id="cat1"></label></h6>
+                  </div>
+                </div>
+                <hr>
+              <form action="" name="formulario2" id="formulario2" method="POST">
+                <div class="row">
+                    <div class="col-sm-12 text-center">
+                        <h3 class="btn-primary">Cambiar Medidor de Usuario </h3>
+                    </div>
+                </div>
+                <div class="row">
+                  
+                  <div class="col-sm-6 ">
+                    <div class="form-group">
+                      <input type="hidden" name="idusuario1" id="idusuario1" class="form-control" value=""  required>
+                      <label>Codigo Medidor</label>
+                      <input type="text" name="codmedidor1" id="codmedidor1" class="form-control" value="" placeholder="Medidor"  required>
+                      
+                    </div>
+                  </div>
+                  <div class="col-sm-3 ">
+                    <div class="form-group">
+                      <label>Lectura Inicial</label>
+                      <input id="lecInic" name="lecInic" class="form-control" type="number" value="" required>
+                    </div>
+                  </div>
+                  <div class="col-sm-3 ">
+                    <div class="form-group">
+                      <label>Fecha Lectura</label>
+                      <input id="fechaMedidor1" name="fechaMedidor1" class="form-control" type="date" value="<?php echo date('Y-m-d'); ?>" required>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 ">
+                    <div class="form-group">
+                      <button class=" btn btn-primary " id="guardarMedida1"> Guardar</button>
+                    </div>
+                  </div>
+                </form>
+                  
+
+
+                </div>
+              </div>
+
+
+
+                
+
+        </div>
+        <!--pie modal-->
+          <div class="modal-footer">
+          <button class="btn btn-default" type="button" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- fin Modal-->
+<?php 
+}else{
+ require 'noacceso.php'; 
+}
+require 'footer.php';
+ ?>
+ <script src="scripts/cliente.js"></script>
+ <?php 
+}
+
+ob_end_flush();
+  ?>
